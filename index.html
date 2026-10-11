@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="TestPilot AI — draft practical software test cases and Playwright starter tests in your browser.">
+  <title>TestPilot AI — Software Testing Copilot</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="TestPilot AI home"><span class="brand-mark">T<span>✦</span></span><span>TestPilot <b>AI</b><small>SOFTWARE QUALITY COPILOT</small></span></a>
+    <div class="top-actions"><span class="local-pill"><i></i> Runs in your browser</span><a class="github-link" href="https://github.com/saichaitanya292/testpilot" target="_blank" rel="noreferrer">GitHub ↗</a></div>
+  </header>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow"><span class="eyebrow-line"></span> QA WORKSPACE <span class="version">BROWSER EDITION</span></div>
+      <h1>Ship with confidence.<br><span>Test with intelligence.</span></h1>
+      <p class="hero-copy">Turn a product requirement into structured test scenarios and a Playwright starter — no API keys, no backend, no setup.</p>
+      <div class="hero-stats"><div><strong>100%</strong><span>Client-side</span></div><div><strong>0</strong><span>API keys needed</span></div><div><strong>JSON · CSV</strong><span>Export formats</span></div></div>
+    </section>
+    <section class="workspace">
+      <div class="section-heading"><div><span class="step">01</span><h2>Describe what to test</h2></div><span class="muted">Your input stays in this browser</span></div>
+      <div class="input-card">
+        <label for="requirement">PRODUCT REQUIREMENT <span class="required">REQUIRED</span></label>
+        <textarea id="requirement" rows="5" maxlength="5000" placeholder="Example: Users can sign in using their email and password. Invalid credentials show an error. Locked accounts cannot sign in."></textarea>
+        <div class="textarea-footer"><span>Be specific about user actions, validation and expected results.</span><span id="char-count">0 / 5000</span></div>
+        <div class="controls">
+          <div class="field-group"><label for="test-type">TEST COVERAGE</label><select id="test-type"><option value="both">UI + API scenarios</option><option value="ui">UI scenarios</option><option value="api">API scenarios</option></select></div>
+          <div class="field-group"><label for="priority">PRIORITY FOCUS</label><select id="priority"><option value="all">All priorities</option><option value="high">High priority only</option><option value="medium">Medium and high</option></select></div>
+          <button id="generate-btn" class="primary-btn"><span>✦</span> Generate test cases <span class="btn-arrow">→</span></button>
+        </div>
+        <div id="error-message" class="error-message" role="alert" hidden></div>
+      </div>
+    </section>
+    <section id="results-section" class="results-section" hidden>
+      <div class="section-heading results-heading"><div><span class="step">02</span><h2>Test plan</h2><span id="result-count" class="count-pill">0 cases</span></div><div class="export-actions"><button id="export-csv" class="secondary-btn">↓ Export CSV</button><button id="export-json" class="secondary-btn">↓ Export JSON</button></div></div>
+      <div id="results-list" class="results-list"></div>
+      <div class="code-card">
+        <div class="code-header"><div><span class="code-dot"></span><span class="code-dot"></span><span class="code-dot"></span><strong>Playwright starter</strong><span class="code-label">JavaScript</span></div><button id="copy-code" class="secondary-btn compact">Copy code</button></div>
+        <pre><code id="playwright-code"></code></pre>
+        <p class="code-note">Starter code only: replace the URL, selectors and assertions with details from your application before running.</p>
+      </div>
+      <div class="results-footer"><span>Review every scenario before using it in a release.</span><button id="clear-results" class="text-btn">Clear results</button></div>
+    </section>
+    <section class="history-section">
+      <div class="section-heading"><div><span class="step">↺</span><h2>Recent runs</h2></div><button id="clear-history" class="text-btn">Clear history</button></div>
+      <div id="history-list" class="history-list"><div class="empty-history">Your recent runs will appear here on this device.</div></div>
+    </section>
+    <footer><div class="brand footer-brand"><span class="brand-mark">T<span>✦</span></span><span>TestPilot <b>AI</b></span></div><p>Free browser edition · No backend required · Built for QA teams</p><a href="https://github.com/saichaitanya292/testpilot" target="_blank" rel="noreferrer">View source on GitHub ↗</a></footer>
+  </main>
+</body>
+</html>
