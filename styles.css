@@ -59,3 +59,70 @@ textarea#requirement::placeholder {
   -webkit-text-fill-color: #8d9ab3 !important;
   opacity: 1 !important;
 }
+
+
+/* Light theme: white surfaces and black text throughout the TestPilot UI. */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel2: #f7f8fb;
+  --line: #d9dee8;
+  --text: #111827;
+  --muted: #4b5563;
+  --purple: #6553c8;
+  --cyan: #087f8c;
+  --red: #b42335;
+  --yellow: #8a5a00;
+}
+body { background: #ffffff !important; color: #111827 !important; }
+.ambient { opacity: .05; }
+.brand, .brand b, .section-heading h2, .hero-stats strong, .case-title,
+.code-header strong, .runner-copy strong, .runs-heading strong,
+.history-title, .local-pill, .run-info strong, .run-conclusion,
+label, footer, footer a, .github-link { color: #111827 !important; }
+.brand small, .hero-copy, .hero-stats span, .muted, .textarea-footer,
+.case-description, .history-sub, .empty-history, .runner-copy p,
+.runs-heading span, .code-note, footer p, .run-info small { color: #4b5563 !important; }
+.eyebrow, .step, .required { color: #087f8c !important; }
+.topbar, footer { border-color: #e5e7eb !important; }
+.local-pill, .version, .step, .count-pill, .tag {
+  border-color: #d1d5db !important;
+  background: #f8fafc !important;
+}
+.input-card, .code-card, .case-card, .history-item, .runs-card,
+.workflow-run, .runner-card {
+  background: #ffffff !important;
+  border-color: #d9dee8 !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .05);
+}
+.input-card textarea, textarea#requirement, #requirement,
+select, input, .field-group select {
+  background: #ffffff !important;
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+  caret-color: #111827 !important;
+  border-color: #cbd5e1 !important;
+}
+textarea::placeholder, #requirement::placeholder, input::placeholder {
+  color: #6b7280 !important;
+  -webkit-text-fill-color: #6b7280 !important;
+  opacity: 1 !important;
+}
+textarea:focus, select:focus, input:focus {
+  border-color: #6553c8 !important;
+  box-shadow: 0 0 0 3px rgba(101, 83, 200, .14) !important;
+}
+.code-header, pre { background: #f8fafc !important; color: #111827 !important; }
+#playwright-code { color: #111827 !important; }
+.secondary-btn { background: #f8fafc !important; color: #111827 !important; border-color: #d1d5db !important; }
+.text-btn { color: #5543b5 !important; }
+.priority.high { background: #fee2e2 !important; color: #991b1b !important; }
+.priority.medium { background: #fef3c7 !important; color: #92400e !important; }
+.priority.low { background: #d1fae5 !important; color: #065f46 !important; }
+.runner-card { background: #f8fafc !important; }
+.runner-icon { background: #d1fae5 !important; color: #065f46 !important; }
+.run-status.success { background: #059669 !important; }
+.run-status.failure { background: #dc2626 !important; }
+.run-status.running { background: #d97706 !important; }
+.case-number { background: #eef2ff !important; color: #4338ca !important; }
