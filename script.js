@@ -268,7 +268,13 @@
     });
     footer.append(selected, note, runButton);
     panel.append(heading, toolbar, list, footer);
-    chatThread.appendChild(panel);
+    // Nest the cards in the assistant message flow. This avoids flex/viewport
+    // sizing quirks that can collapse a direct child to a thin divider on iOS.
+    const messages = chatThread.querySelectorAll(".assistant-message");
+    const lastAssistant = messages[messages.length - 1];
+    const messageBody = lastAssistant && lastAssistant.querySelector(".message-body");
+    if (messageBody) messageBody.appendChild(panel);
+    else chatThread.appendChild(panel);
     syncSelectionUI();
     // Explicitly scroll the chat's own viewport; scrollIntoView alone can leave
     // newly appended cards below the visible area on iOS Safari.
