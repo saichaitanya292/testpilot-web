@@ -33,3 +33,29 @@ input::selection {
   color: #ffffff;
   -webkit-text-fill-color: #ffffff;
 }
+
+
+/* Product requirements textarea: force readable text even when browser autofill/theme overrides colors. */
+#requirement,
+textarea#requirement,
+.input-card textarea#requirement {
+  background: #0b1323 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #6ce5d3 !important;
+  opacity: 1 !important;
+  font-family: Manrope, system-ui, sans-serif;
+}
+#requirement:focus,
+textarea#requirement:focus,
+.input-card textarea#requirement:focus {
+  background: #0b1323 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+#requirement::placeholder,
+textarea#requirement::placeholder {
+  color: #8d9ab3 !important;
+  -webkit-text-fill-color: #8d9ab3 !important;
+  opacity: 1 !important;
+}
