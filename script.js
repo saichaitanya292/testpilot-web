@@ -192,7 +192,6 @@
     all.id = "chat-select-all";
     const allText = document.createElement("span");
     allText.textContent = "Select all";
-    all.append;
     toolbar.append(all, allText);
     all.addEventListener("change", () => {
       selectedCaseIds = all.checked ? new Set(cases.map(c => c.id)) : new Set();
