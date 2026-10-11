@@ -206,6 +206,109 @@
     if (selectedTitles) selectedTitles.textContent = count ? latestCases.filter(c => selectedCaseIds.has(c.id)).map(c => c.title).join(", ") : "Choose at least one case to continue.";
   }
 
+  function detailedStepsFor(testCase) {
+    const title = low(testCase.title);
+    const goal = low(latestRequirement);
+    const isJobFlow = has(goal + " " + title, ["job", "career", "apply", "employer", "vacancy", "position", "listing"]);
+    const isSearch = has(title, ["search", "filter", "sort", "query", "results"]);
+    const isDetail = has(title, ["detail", "listing", "open an item", "view"]);
+    const isApply = has(title, ["apply", "application"]);
+    const isAuth = has(title, ["sign in", "login", "credential", "password", "account"]);
+    const isForm = has(title, ["form", "required", "input", "validation", "submit"]);
+    const isResponsive = has(title, ["responsive", "viewport", "layout"]);
+    const isLink = has(title, ["link", "navigation", "destination"]);
+    const isApi = testCase.type === "API";
+    let steps;
+    if (isApi) {
+      steps = [
+        "Identify the API route and HTTP method associated with this scenario from the website's network activity or published API documentation.",
+        "Record the required headers, authentication requirements, query parameters, and request body; use non-production test data.",
+        "Send the valid or invalid request described by this test case and capture the response status, headers, and body.",
+        "Verify the response matches the documented contract and that no sensitive data or stack traces are exposed.",
+        "Check the resulting UI or resource state, where applicable, to confirm the request had only the intended effect."
+      ];
+    } else if (isSearch && isJobFlow) {
+      steps = [
+        "Open the target website and wait for the main page content to become visible; record the page title and URL.",
+        "Inspect the rendered page for a job-search input using its accessible label, placeholder, role, or nearby search text; identify the search/submit control.",
+        "Enter a distinctive keyword (for example, \"software engineer\") and submit using the visible search control or Enter key.",
+        "Wait for the results area to update. Verify results are displayed, or that a clear empty-state message appears if there are no matches.",
+        "Check a few visible result titles and snippets for relevance to the keyword; verify result cards are not blank or duplicated.",
+        "If filters or sorting controls are present, apply one option and verify the visible results update consistently.",
+        "Capture a screenshot and note the final URL, visible result count, console errors, and any failed network requests."
+      ];
+    } else if (isDetail && isJobFlow) {
+      steps = [
+        "Open the target website and wait until job cards or listing links are visible.",
+        "Select a visible listing by its title or accessible link text; avoid relying on brittle positional selectors where possible.",
+        "Wait for the detail view or destination page to load and verify the URL changes as expected.",
+        "Confirm the page exposes key job information such as title, employer, location, description, and requirements when those fields are provided by the site.",
+        "Verify the selected listing title matches the detail page title and that the page contains meaningful content.",
+        "Use the browser Back action and confirm the previous results/listing view can be reached again.",
+        "Capture a screenshot and report missing fields, broken links, or navigation errors."
+      ];
+    } else if (isApply && isJobFlow) {
+      steps = [
+        "Open a job listing and verify the job title and employer before interacting with the application control.",
+        "Locate the Apply control by its accessible role and name; record whether it is a button or link and inspect its destination.",
+        "Activate Apply and wait for navigation, a new tab, or an application form to appear.",
+        "Verify the destination is relevant to the selected listing and that the application page/form loads successfully.",
+        "If the flow asks for personal information or submits an application, stop before final submission unless an explicitly approved test account and safe test mode are available.",
+        "Check required-field validation using empty or clearly invalid test data only where safe; verify feedback is visible and understandable.",
+        "Capture the resulting page URL and screenshot; record any broken destination or unexpected external redirect."
+      ];
+    } else if (isAuth) {
+      steps = [
+        "Open the target website and locate the sign-in form or account entry point using visible text and accessible labels.",
+        "Identify the username/email field, password field, and submit control; verify labels and input types are appropriate.",
+        "For the positive path, use only an approved test account and submit valid test credentials.",
+        "Verify successful sign-in by checking the expected authenticated page or account indicator, without exposing credentials in logs.",
+        "For the negative path, test empty fields and an invalid test password; verify access is denied and a clear, non-sensitive message appears.",
+        "Confirm password values remain masked and that keyboard focus and form validation are usable.",
+        "Capture screenshots with credentials and personal data excluded."
+      ];
+    } else if (isForm) {
+      steps = [
+        "Open the relevant page and identify the form, its visible labels, required indicators, and submit control.",
+        "Record the expected fields and allowed formats from the page's helper text or validation messages.",
+        "Submit with required fields empty and verify field-level errors appear without losing entered data.",
+        "Enter malformed values in fields with known formats and verify the form blocks invalid submission with actionable feedback.",
+        "Enter valid test values and submit once; verify the expected confirmation or next page appears.",
+        "Activate submit again quickly and verify the UI prevents unintended duplicate submission where appropriate.",
+        "Check keyboard navigation, focus order, and mobile layout; capture a screenshot of any failure."
+      ];
+    } else if (isResponsive) {
+      steps = [
+        "Open the target website at a desktop viewport and note the main navigation, content columns, and primary actions.",
+        "Resize to a mobile viewport (approximately 390 × 844) and wait for layout changes to settle.",
+        "Verify text, menus, inputs, buttons, and cards remain visible and usable without horizontal page overflow.",
+        "Interact with the main action at mobile size and confirm it remains reachable and responds correctly.",
+        "Repeat at a tablet viewport and check for overlap, clipping, or unexpectedly hidden content.",
+        "Capture screenshots at each viewport and record document width versus viewport width."
+      ];
+    } else if (isLink) {
+      steps = [
+        "Open the target website and collect visible navigation links and primary action links.",
+        "Verify each relevant link has a non-empty destination and an accessible name.",
+        "Open the link and wait for the destination to load; verify it returns a successful page rather than an error or blank screen.",
+        "For internal links, confirm the destination remains within the expected site; for external links, confirm the destination is appropriate.",
+        "Use browser Back and verify the original page remains usable.",
+        "Capture the failing URL and screenshot for any broken or unexpected navigation."
+      ];
+    } else {
+      steps = [
+        "Navigate to the target website and wait for the main content to load; record the page title and current URL.",
+        "Inspect the visible page and identify the controls, text, links, and expected state relevant to this scenario.",
+        "Perform the primary user action described by the test case using accessible roles, labels, or visible text rather than fragile selectors.",
+        "Verify the expected success state and confirm the page displays the correct content or feedback.",
+        "Exercise the negative or boundary condition described by the case and verify the application handles it safely.",
+        "Check that the action does not create duplicate or inconsistent state when repeated, where relevant.",
+        "Capture a screenshot and record console errors, failed requests, and the exact observed-versus-expected result."
+      ];
+    }
+    return steps;
+  }
+
   function renderChatCases(cases) {
     const oldPanel = $("chat-test-cases");
     if (oldPanel) oldPanel.remove();
@@ -236,10 +339,17 @@
     const list = document.createElement("div");
     list.className = "chat-case-list";
     list.innerHTML = cases.map(c => `
-      <label class="chat-case-option">
-        <input type="checkbox" data-chat-case-id="${c.id}" ${selectedCaseIds.has(c.id) ? "checked" : ""}>
-        <span class="chat-case-copy"><strong>${esc(c.title)}</strong><span>${esc(c.description)}</span><small>${esc(c.type)} · ${esc(c.priority)} priority</small></span>
-      </label>`).join("");
+      <div class="chat-case-option">
+        <label class="chat-case-choice">
+          <input type="checkbox" data-chat-case-id="${c.id}" ${selectedCaseIds.has(c.id) ? "checked" : ""}>
+          <span class="chat-case-copy"><strong>${esc(c.title)}</strong><span>${esc(c.description)}</span><small>${esc(c.type)} · ${esc(c.priority)} priority</small></span>
+        </label>
+        <details class="case-step-details">
+          <summary>View detailed test steps</summary>
+          <ol>${detailedStepsFor(c).map(step => "<li>" + esc(step) + "</li>").join("")}</ol>
+          <p>Steps are drafted from the requirement and scenario. Live DOM/selector discovery happens only when the browser workflow runs.</p>
+        </details>
+      </div>`).join("");
     list.querySelectorAll("[data-chat-case-id]").forEach(input => input.addEventListener("change", () => {
       const id = Number(input.dataset.chatCaseId);
       if (input.checked) selectedCaseIds.add(id); else selectedCaseIds.delete(id);
