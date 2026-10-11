@@ -240,3 +240,35 @@ footer,
   .chat-run-actions { flex-direction: column; }
   .chat-run-actions button { width: 100%; }
 }
+
+/* Robust mobile rendering: keep the suggested-cases panel in normal document flow. */
+.chat-thread > .assistant-message { flex: 0 0 auto; min-width: 0; }
+.chat-thread .message-body { min-width: 0; width: 100%; }
+.chat-thread .chat-case-panel {
+  display: block !important;
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 14px 0 8px !important;
+  padding: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  border: 1px solid #d9dee8 !important;
+  border-radius: 13px !important;
+  background: #fff !important;
+  color: #111827 !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+.chat-thread .chat-case-panel * { box-sizing: border-box; }
+.chat-thread .chat-case-list { display: grid !important; max-height: 390px; overflow-y: auto; }
+.chat-thread .chat-case-option { display: flex !important; width: 100%; }
+.chat-thread .chat-case-footer { display: flex !important; }
+.chat-thread .chat-case-footer .chat-run-button { display: inline-flex !important; min-height: 42px; }
+@media(max-width:680px) {
+  .chat-thread .chat-case-panel { margin-left: 0 !important; width: 100% !important; }
+  .chat-thread .chat-case-heading { display: flex !important; }
+}
