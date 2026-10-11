@@ -231,12 +231,100 @@
     const selected = document.createElement("span");
     selected.id = "chat-selected-titles";
     const note = document.createElement("small");
-    note.textContent = "Planning only — selecting cases does not start a run.";
-    footer.append(selected, note);
+    note.textContent = "Select the cases you want. Nothing runs until you choose Run selected tests.";
+    const runButton = document.createElement("button");
+    runButton.type = "button";
+    runButton.className = "chat-run-button";
+    runButton.textContent = "▶ Run selected tests";
+    runButton.addEventListener("click", () => {
+      const chosen = latestCases.filter(c => selectedCaseIds.has(c.id));
+      if (!chosen.length) {
+        selected.textContent = "Select at least one test case before continuing.";
+        return;
+      }
+      renderRunConfirmation(chosen);
+    });
+    footer.append(selected, note, runButton);
     panel.append(heading, toolbar, list, footer);
     chatThread.appendChild(panel);
     syncSelectionUI();
     panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+
+  function renderRunConfirmation(chosen) {
+    const existing = $("chat-run-confirmation");
+    if (existing) existing.remove();
+    const card = document.createElement("section");
+    card.id = "chat-run-confirmation";
+    card.className = "chat-run-confirmation";
+    const title = document.createElement("h3");
+    title.textContent = "Prepare your test run";
+    const summary = document.createElement("p");
+    summary.textContent = chosen.length + " selected case(s): " + chosen.map(c => c.title).join("; ");
+    const urlLabel = document.createElement("label");
+    urlLabel.htmlFor = "chat-run-target-url";
+    urlLabel.textContent = "TARGET WEBSITE URL";
+    const urlInput = document.createElement("input");
+    urlInput.id = "chat-run-target-url";
+    urlInput.type = "url";
+    urlInput.inputMode = "url";
+    urlInput.value = "https://saichaitanya292.github.io/india-job-alert-media/";
+    urlInput.placeholder = "https://your-website.example";
+    urlInput.autocomplete = "url";
+    const scenarioLabel = document.createElement("label");
+    scenarioLabel.htmlFor = "chat-run-scenario";
+    scenarioLabel.textContent = "SCENARIO FOR GITHUB ACTIONS";
+    const scenario = document.createElement("textarea");
+    scenario.id = "chat-run-scenario";
+    scenario.rows = 4;
+    scenario.value = "Test these selected scenarios: " + chosen.map(c => c.title + " — " + c.description).join(" | ");
+    const keywordLabel = document.createElement("label");
+    keywordLabel.htmlFor = "chat-run-keyword";
+    keywordLabel.textContent = "SEARCH KEYWORD";
+    const keyword = document.createElement("input");
+    keyword.id = "chat-run-keyword";
+    keyword.type = "text";
+    keyword.value = "software engineer";
+    keyword.maxLength = 120;
+    const notice = document.createElement("p");
+    notice.className = "chat-run-notice";
+    notice.textContent = "This opens the existing GitHub Actions workflow. You must sign in, enter the target URL, scenario, and keyword, then select Run workflow. The current runner does not yet execute each selected card as a separate test; the scenario is passed as guidance to the existing workflow.";
+    const actions = document.createElement("div");
+    actions.className = "chat-run-actions";
+    const copyButton = document.createElement("button");
+    copyButton.type = "button";
+    copyButton.className = "chat-copy-scenario";
+    copyButton.textContent = "Copy scenario";
+    copyButton.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(scenario.value);
+        copyButton.textContent = "Copied ✓";
+      } catch {
+        scenario.focus();
+        scenario.select();
+        copyButton.textContent = "Scenario selected — copy it";
+      }
+    });
+    const openButton = document.createElement("button");
+    openButton.type = "button";
+    openButton.className = "chat-run-button";
+    openButton.textContent = "Continue to GitHub Actions ↗";
+    openButton.addEventListener("click", () => {
+      let target;
+      try { target = new URL(urlInput.value.trim()); }
+      catch { notice.textContent = "Enter a valid public website URL beginning with https:// or http://."; urlInput.focus(); return; }
+      if (!["http:", "https:"].includes(target.protocol) || ["localhost", "127.0.0.1", "::1"].includes(target.hostname)) {
+        notice.textContent = "Use a public http:// or https:// website URL. Localhost targets are not supported by the hosted runner.";
+        urlInput.focus();
+        return;
+      }
+      window.open("https://github.com/saichaitanya292/testpilot-web/actions/workflows/playwright.yml", "_blank", "noopener,noreferrer");
+      notice.textContent = "GitHub Actions opened. Enter this target URL: " + target.href + " Copy the scenario if needed, then submit the workflow form. This page cannot submit the workflow on your behalf.";
+    });
+    actions.append(copyButton, openButton);
+    card.append(title, summary, urlLabel, urlInput, scenarioLabel, scenario, keywordLabel, keyword, notice, actions);
+    chatThread.appendChild(card);
+    card.scrollIntoView({behavior:"smooth", block:"nearest"});
   }
 
   function renderCasesWithoutChat(cases) {
