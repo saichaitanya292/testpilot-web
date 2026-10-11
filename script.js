@@ -21,7 +21,20 @@
   const generateBtn = $("generate-btn");
   const agentPrompt = $("agent-prompt"); const chatThread = $("chat-thread"); const chatForm = $("agent-chat-form");
   function addChatMessage(text, role) { const article=document.createElement("article"); article.className="chat-message "+(role==="user"?"user-message":"assistant-message"); const avatar=document.createElement("div"); avatar.className="message-avatar"; avatar.textContent=role==="user"?"You":"✦"; const body=document.createElement("div"); body.className="message-body"; const author=document.createElement("div"); author.className="message-author"; author.textContent=role==="user"?"You":"TestPilot"; const p=document.createElement("p"); p.textContent=text; body.append(author,p); article.append(avatar,body); chatThread.appendChild(article); article.scrollIntoView({behavior:"smooth",block:"nearest"}); }
-  function submitAgentPrompt(value) { value=String(value||"").trim(); if(value.length<8){agentPrompt.focus();return;} addChatMessage(value,"user"); agentPrompt.value=""; requirement.value=value; requirement.dispatchEvent(new Event("input",{bubbles:true})); addChatMessage("I’ll convert your request into suggested test cases now. Review the plan below and adjust the coverage or priorities before deciding what to run.","assistant"); generateBtn.click(); $("results-section").hidden=false; setTimeout(()=>$("results-section").scrollIntoView({behavior:"smooth",block:"start"}),100); }
+  function submitAgentPrompt(value) {
+    value = String(value || "").trim();
+    if (value.length < 8) { agentPrompt.focus(); return; }
+    addChatMessage(value, "user");
+    agentPrompt.value = "";
+    requirement.value = value;
+    requirement.dispatchEvent(new Event("input", { bubbles: true }));
+    addChatMessage("Here are the suggested test cases. Select the scenarios you want to include; nothing runs until you confirm.", "assistant");
+    // Render the plan directly instead of clicking the legacy hidden form button.
+    // The chat-only layout intentionally hides the old workspace and results section.
+    showResults(value, typeSelect.value);
+    const panel = $("chat-test-cases");
+    if (panel) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
   chatForm?.addEventListener("submit",e=>{e.preventDefault();submitAgentPrompt(agentPrompt.value);});
   agentPrompt?.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();chatForm.requestSubmit();}});
   $("use-example")?.addEventListener("click",()=>{agentPrompt.value="Test my job website: search for Python developer jobs, open a listing, check the job details, and verify the Apply button.";agentPrompt.focus();});
