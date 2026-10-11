@@ -29,9 +29,31 @@
     requirement.value = value;
     requirement.dispatchEvent(new Event("input", { bubbles: true }));
     addChatMessage("Here are the suggested test cases. Select the scenarios you want to include; nothing runs until you confirm.", "assistant");
-    // Render the plan directly instead of clicking the legacy hidden form button.
-    // The chat-only layout intentionally hides the old workspace and results section.
-    showResults(value, typeSelect.value);
+    // Render chat cards independently from the legacy results workspace, which is hidden in chat-only mode.
+    try {
+      latestRequirement = value;
+      latestType = typeSelect ? typeSelect.value : "both";
+      latestCases = filterCases(buildCases(value, latestType));
+      selectedCaseIds = new Set(latestCases.filter(c => c.priority === "high").map(c => c.id));
+      renderChatCases(latestCases);
+      const resultsList = $("results-list");
+      if (resultsList) renderCasesWithoutChat(latestCases);
+      const count = $("result-count");
+      if (count) count.textContent = latestCases.length + (latestCases.length === 1 ? " case" : " cases");
+      const code = $("playwright-code");
+      if (code) code.textContent = makePlaywright(value, latestCases);
+      const section = $("results-section");
+      if (section) section.hidden = false;
+      saveHistory(value, latestCases.length, latestType);
+      if (!latestCases.length) addChatMessage("I couldn't generate cases for that request. Try describing a specific user action, such as searching for a job or signing in.", "assistant");
+    } catch (error) {
+      console.error("TestPilot card rendering failed:", error);
+      const fallback = document.createElement("section");
+      fallback.className = "chat-case-panel";
+      fallback.innerHTML = '<div class="chat-case-heading"><div><strong>Test cases could not render</strong><span>Please refresh this page and try again.</span></div></div>';
+      chatThread.appendChild(fallback);
+      addChatMessage("The card renderer hit an error. Refresh the page and try again. If this persists, the browser console may contain details.", "assistant");
+    }
     const panel = $("chat-test-cases");
     if (panel) panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
