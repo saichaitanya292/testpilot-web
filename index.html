@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0b1020">
   <meta name="description" content="TestPilot AI — draft practical software test cases and Playwright starter tests in your browser.">
   <title>TestPilot AI — Software Testing Copilot</title>
-  <link rel="stylesheet" href="./styles.css?v=light-20261011">
+  <link rel="stylesheet" href="./styles.css?v=agent-chat-20261011">
   <script src="./script.js" defer></script>
 </head>
 <body>
@@ -22,6 +22,12 @@
       <p class="hero-copy">Turn a product requirement into structured test scenarios and a Playwright starter — no API keys, no backend, no setup.</p>
       <div class="hero-stats"><div><strong>100%</strong><span>Client-side</span></div><div><strong>0</strong><span>API keys needed</span></div><div><strong>JSON · CSV</strong><span>Export formats</span></div></div>
     </section>
+    <section class="agent-shell" aria-label="TestPilot AI chat workspace">
+      <aside class="agent-sidebar"><div class="sidebar-label">WORKSPACE</div><button class="new-chat-btn" id="new-chat-btn" type="button"><span>＋</span> New test session</button><div class="sidebar-label recent-label">QUICK START</div>
+        <button class="prompt-suggestion" data-prompt="Test my website search flow. Find the search box, search for software engineer jobs, and verify the results." type="button">⌕ <span>Test a search flow</span></button><button class="prompt-suggestion" data-prompt="Test the sign-in flow, including valid credentials, invalid password, empty fields, and error messages." type="button">♙ <span>Test sign-in</span></button><button class="prompt-suggestion" data-prompt="Explore the main user journey on my website and suggest high-priority functional, validation, and responsive tests." type="button">✧ <span>Explore user journey</span></button><div class="sidebar-foot"><span class="status-dot"></span> Test planning available<br><small>Secure browser runner connection pending.</small></div></aside>
+      <div class="agent-main"><div class="agent-topline"><div><span class="agent-avatar">✦</span><div><strong>TestPilot Agent</strong><small><span class="status-dot"></span> QA assistant · Natural language</small></div></div><span class="model-chip">TEST PLANNER</span></div>
+        <div class="chat-thread" id="chat-thread" aria-live="polite"><div class="chat-day-label">YOUR QA WORKSPACE</div><article class="chat-message assistant-message"><div class="message-avatar">✦</div><div class="message-body"><div class="message-author">TestPilot <span>AI agent</span></div><p>Hi! Tell me what you want to test, in your own words. I’ll turn your goal into a list of test cases you can review before running.</p><div class="welcome-prompt"><strong>For example</strong><p>“Test my job website: search for Python developer jobs, open a listing, check the job details, and verify the Apply button.”</p><button type="button" id="use-example" class="example-use">Use example ↗</button></div></div></article></div>
+        <div class="chat-composer-wrap"><div class="composer-hint"><span>Describe a user journey</span><span>Enter to send · Shift+Enter for a new line</span></div><form id="agent-chat-form" class="chat-composer"><textarea id="agent-prompt" rows="2" maxlength="5000" placeholder="I want to test that users can search jobs, open a result, and apply…" aria-label="Describe what to test"></textarea><div class="composer-bottom"><span class="composer-note">✧ Natural-language test planning</span><button class="send-message-btn" id="send-message-btn" type="submit" aria-label="Send message">↑</button></div></form><p class="agent-disclaimer">Review suggested cases before execution. No test runs until you confirm.</p></div></div></section>
     <section class="workspace">
       <div class="section-heading"><div><span class="step">01</span><h2>Describe what to test</h2></div><span class="muted">Your input stays in this browser</span></div>
       <div class="input-card">
