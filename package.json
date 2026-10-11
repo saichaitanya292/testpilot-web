@@ -1,0 +1,12 @@
+{
+  "name": "testpilot-web-playwright",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Browser smoke tests for public websites, executed in GitHub Actions",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.55.0"
+  }
+}
