@@ -206,4 +206,39 @@
   $("clear-results").addEventListener("click", () => { $("results-section").hidden = true; latestCases = []; latestRequirement = ""; });
   $("clear-history").addEventListener("click", () => { try { localStorage.removeItem("testpilot-history"); } catch {} renderHistory(); });
   renderHistory();
+
+  async function refreshWorkflowRuns() {
+    const target = $("workflow-runs");
+    const button = $("refresh-runs");
+    if (button) { button.disabled = true; button.textContent = "Loading…"; }
+    target.innerHTML = '<div class="empty-history">Checking GitHub Actions…</div>';
+    try {
+      const response = await fetch("https://api.github.com/repos/saichaitanya292/testpilot-web/actions/workflows/playwright.yml/runs?per_page=5", { headers: { "Accept": "application/vnd.github+json" } });
+      if (!response.ok) throw new Error("GitHub API returned " + response.status);
+      const data = await response.json();
+      const runs = Array.isArray(data.workflow_runs) ? data.workflow_runs : [];
+      if (!runs.length) {
+        target.innerHTML = '<div class="empty-history">No runs yet. Tap “Start on GitHub”, sign in, choose Run workflow, then refresh here.</div>';
+        return;
+      }
+      target.innerHTML = runs.map(run => {
+        const conclusion = run.conclusion || run.status || "unknown";
+        const state = conclusion === "success" ? "success" : (["failure","cancelled","timed_out","action_required"].includes(conclusion) ? "failure" : "running");
+        const label = conclusion.replace(/_/g, " ");
+        const started = run.created_at ? new Date(run.created_at).toLocaleString() : "Time unavailable";
+        const title = run.display_title || run.name || "Playwright browser tests";
+        return '<a class="workflow-run" href="' + esc(run.html_url) + '" target="_blank" rel="noreferrer">' +
+          '<span class="run-status ' + state + '"></span><span class="run-info"><strong>' + esc(title) +
+          '</strong><small>#' + Number(run.run_number) + ' · ' + esc(started) + '</small></span>' +
+          '<span class="run-conclusion ' + state + '">' + esc(label) + ' ↗</span></a>';
+      }).join("");
+    } catch (error) {
+      target.innerHTML = '<div class="empty-history">Could not load runs. Open <a href="https://github.com/saichaitanya292/testpilot-web/actions/workflows/playwright.yml" target="_blank" rel="noreferrer">GitHub Actions</a> and check repository visibility or refresh later.</div>';
+    } finally {
+      if (button) { button.disabled = false; button.textContent = "↻ Refresh"; }
+    }
+  }
+  $("refresh-runs")?.addEventListener("click", refreshWorkflowRuns);
+  refreshWorkflowRuns();
+
 })();
