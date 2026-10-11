@@ -143,13 +143,104 @@
     return lines.join("\n");
   }
 
+  let selectedCaseIds = new Set();
+
   function renderCases(cases) {
     $("results-list").innerHTML = cases.map(c => `
       <article class="case-card">
+        <label class="case-select" aria-label="Select ${esc(c.title)}"><input type="checkbox" data-case-id="${c.id}" ${selectedCaseIds.has(c.id) ? "checked" : ""}></label>
         <div class="case-number">${String(c.id).padStart(2, "0")}</div>
         <div><h3 class="case-title">${esc(c.title)}</h3><p class="case-description">${esc(c.description)}</p><div class="case-meta"><span class="tag">${esc(c.type)}</span><span class="tag">Requirement-based</span></div></div>
         <span class="priority ${esc(c.priority)}">${esc(c.priority)}</span>
       </article>`).join("");
+    $("results-list").querySelectorAll("[data-case-id]").forEach(input => input.addEventListener("change", () => {
+      const id = Number(input.dataset.caseId);
+      if (input.checked) selectedCaseIds.add(id); else selectedCaseIds.delete(id);
+      syncSelectionUI();
+    }));
+    renderChatCases(cases);
+  }
+
+  function syncSelectionUI() {
+    const count = latestCases.filter(c => selectedCaseIds.has(c.id)).length;
+    const countLabel = $("chat-selected-count");
+    if (countLabel) countLabel.textContent = count + " selected";
+    const selectAll = $("chat-select-all");
+    if (selectAll) selectAll.checked = latestCases.length > 0 && latestCases.every(c => selectedCaseIds.has(c.id));
+    const selectedTitles = $("chat-selected-titles");
+    if (selectedTitles) selectedTitles.textContent = count ? latestCases.filter(c => selectedCaseIds.has(c.id)).map(c => c.title).join(", ") : "Choose at least one case to continue.";
+  }
+
+  function renderChatCases(cases) {
+    const oldPanel = $("chat-test-cases");
+    if (oldPanel) oldPanel.remove();
+    const panel = document.createElement("section");
+    panel.id = "chat-test-cases";
+    panel.className = "chat-case-panel";
+    const heading = document.createElement("div");
+    heading.className = "chat-case-heading";
+    const headingText = document.createElement("div");
+    headingText.innerHTML = '<strong>Suggested test cases</strong><span>Choose which scenarios belong in this test run.</span>';
+    const count = document.createElement("span");
+    count.className = "chat-selected-count";
+    count.id = "chat-selected-count";
+    heading.append(headingText, count);
+    const toolbar = document.createElement("label");
+    toolbar.className = "chat-select-all";
+    const all = document.createElement("input");
+    all.type = "checkbox";
+    all.id = "chat-select-all";
+    const allText = document.createElement("span");
+    allText.textContent = "Select all";
+    all.append;
+    toolbar.append(all, allText);
+    all.addEventListener("change", () => {
+      selectedCaseIds = all.checked ? new Set(cases.map(c => c.id)) : new Set();
+      renderChatCases(cases);
+      renderCasesWithoutChat(cases);
+    });
+    const list = document.createElement("div");
+    list.className = "chat-case-list";
+    list.innerHTML = cases.map(c => `
+      <label class="chat-case-option">
+        <input type="checkbox" data-chat-case-id="${c.id}" ${selectedCaseIds.has(c.id) ? "checked" : ""}>
+        <span class="chat-case-copy"><strong>${esc(c.title)}</strong><span>${esc(c.description)}</span><small>${esc(c.type)} · ${esc(c.priority)} priority</small></span>
+      </label>`).join("");
+    list.querySelectorAll("[data-chat-case-id]").forEach(input => input.addEventListener("change", () => {
+      const id = Number(input.dataset.chatCaseId);
+      if (input.checked) selectedCaseIds.add(id); else selectedCaseIds.delete(id);
+      const matching = $("results-list")?.querySelector('[data-case-id="' + id + '"]');
+      if (matching) matching.checked = input.checked;
+      syncSelectionUI();
+      list.querySelectorAll("[data-chat-case-id]").forEach(box => { box.checked = selectedCaseIds.has(Number(box.dataset.chatCaseId)); });
+    }));
+    const footer = document.createElement("div");
+    footer.className = "chat-case-footer";
+    const selected = document.createElement("span");
+    selected.id = "chat-selected-titles";
+    const note = document.createElement("small");
+    note.textContent = "Planning only — selecting cases does not start a run.";
+    footer.append(selected, note);
+    panel.append(heading, toolbar, list, footer);
+    chatThread.appendChild(panel);
+    syncSelectionUI();
+    panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+
+  function renderCasesWithoutChat(cases) {
+    $("results-list").innerHTML = cases.map(c => `
+      <article class="case-card">
+        <label class="case-select" aria-label="Select ${esc(c.title)}"><input type="checkbox" data-case-id="${c.id}" ${selectedCaseIds.has(c.id) ? "checked" : ""}></label>
+        <div class="case-number">${String(c.id).padStart(2, "0")}</div>
+        <div><h3 class="case-title">${esc(c.title)}</h3><p class="case-description">${esc(c.description)}</p><div class="case-meta"><span class="tag">${esc(c.type)}</span><span class="tag">Requirement-based</span></div></div>
+        <span class="priority ${esc(c.priority)}">${esc(c.priority)}</span>
+      </article>`).join("");
+    $("results-list").querySelectorAll("[data-case-id]").forEach(input => input.addEventListener("change", () => {
+      const id = Number(input.dataset.caseId);
+      if (input.checked) selectedCaseIds.add(id); else selectedCaseIds.delete(id);
+      syncSelectionUI();
+      renderChatCases(latestCases);
+    }));
   }
 
   function readHistory() {
@@ -178,6 +269,7 @@
     latestRequirement = text;
     latestType = kind;
     latestCases = filterCases(buildCases(text, kind));
+    selectedCaseIds = new Set(latestCases.filter(c => c.priority === "high").map(c => c.id));
     renderCases(latestCases);
     $("result-count").textContent = latestCases.length + (latestCases.length === 1 ? " case" : " cases");
     $("playwright-code").textContent = makePlaywright(text, latestCases);
