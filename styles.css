@@ -272,3 +272,15 @@ footer,
   .chat-thread .chat-case-panel { margin-left: 0 !important; width: 100% !important; }
   .chat-thread .chat-case-heading { display: flex !important; }
 }
+
+/* Detailed step-by-step test case panels */
+.chat-case-option{display:block}
+.chat-case-choice{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.chat-case-choice>input{flex:0 0 auto;margin-top:4px;accent-color:#9b8cff}
+.case-step-details{margin:10px 0 0 27px;border-top:1px solid #29364e;padding-top:8px;color:#b9c6dc}
+.case-step-details summary{cursor:pointer;color:#9fafff;font-size:11px;font-weight:700;list-style-position:outside}
+.case-step-details summary:hover{color:#d2ccff}
+.case-step-details ol{margin:10px 0 8px;padding-left:20px;display:grid;gap:8px}
+.case-step-details li{font-size:11px;line-height:1.65;color:#d0d9e9;padding-left:2px}
+.case-step-details p{font-size:10px;line-height:1.55;color:#8292ad;margin:8px 0 2px}
+@media(max-width:520px){.case-step-details{margin-left:25px}.case-step-details li{font-size:10px}}
