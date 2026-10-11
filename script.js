@@ -19,6 +19,14 @@
     forceRequirementTextColor();
   }
   const generateBtn = $("generate-btn");
+  const agentPrompt = $("agent-prompt"); const chatThread = $("chat-thread"); const chatForm = $("agent-chat-form");
+  function addChatMessage(text, role) { const article=document.createElement("article"); article.className="chat-message "+(role==="user"?"user-message":"assistant-message"); const avatar=document.createElement("div"); avatar.className="message-avatar"; avatar.textContent=role==="user"?"You":"✦"; const body=document.createElement("div"); body.className="message-body"; const author=document.createElement("div"); author.className="message-author"; author.textContent=role==="user"?"You":"TestPilot"; const p=document.createElement("p"); p.textContent=text; body.append(author,p); article.append(avatar,body); chatThread.appendChild(article); article.scrollIntoView({behavior:"smooth",block:"nearest"}); }
+  function submitAgentPrompt(value) { value=String(value||"").trim(); if(value.length<8){agentPrompt.focus();return;} addChatMessage(value,"user"); agentPrompt.value=""; requirement.value=value; requirement.dispatchEvent(new Event("input",{bubbles:true})); addChatMessage("I’ll convert your request into suggested test cases now. Review the plan below and adjust the coverage or priorities before deciding what to run.","assistant"); generateBtn.click(); $("results-section").hidden=false; setTimeout(()=>$("results-section").scrollIntoView({behavior:"smooth",block:"start"}),100); }
+  chatForm?.addEventListener("submit",e=>{e.preventDefault();submitAgentPrompt(agentPrompt.value);});
+  agentPrompt?.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();chatForm.requestSubmit();}});
+  $("use-example")?.addEventListener("click",()=>{agentPrompt.value="Test my job website: search for Python developer jobs, open a listing, check the job details, and verify the Apply button.";agentPrompt.focus();});
+  $("new-chat-btn")?.addEventListener("click",()=>{chatThread.innerHTML="";const article=document.createElement("article");article.className="chat-message assistant-message";article.innerHTML='<div class="message-avatar">✦</div><div class="message-body"><div class="message-author">TestPilot <span>AI agent</span></div><p>New test session started. What website flow would you like me to plan tests for?</p></div>';chatThread.appendChild(article);agentPrompt.value="";$("results-section").hidden=true;agentPrompt.focus();});
+  document.querySelectorAll(".prompt-suggestion").forEach(b=>b.addEventListener("click",()=>{agentPrompt.value=b.dataset.prompt||"";agentPrompt.focus();}));
   let latestCases = [];
   let latestRequirement = "";
   let latestType = "both";
