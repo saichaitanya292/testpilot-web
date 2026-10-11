@@ -4,6 +4,20 @@
   const requirement = $("requirement");
   const typeSelect = $("test-type");
   const prioritySelect = $("priority");
+  // Work around Android/browser autofill and forced-colors styles that can render typed text black.
+  if (requirement) {
+    const forceRequirementTextColor = () => {
+      requirement.style.setProperty("color", "#ffffff", "important");
+      requirement.style.setProperty("-webkit-text-fill-color", "#ffffff", "important");
+      requirement.style.setProperty("background-color", "#0b1323", "important");
+      requirement.style.setProperty("caret-color", "#6ce5d3", "important");
+      requirement.style.setProperty("opacity", "1", "important");
+    };
+    ["focus", "input", "keyup", "change"].forEach(eventName =>
+      requirement.addEventListener(eventName, forceRequirementTextColor)
+    );
+    forceRequirementTextColor();
+  }
   const generateBtn = $("generate-btn");
   let latestCases = [];
   let latestRequirement = "";
