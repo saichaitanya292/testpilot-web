@@ -8,6 +8,16 @@ on:
         required: true
         type: string
         default: "https://saichaitanya292.github.io/india-job-alert-media/"
+      test_scenario:
+        description: Natural-language browser scenario
+        required: true
+        type: string
+        default: "Search for jobs"
+      search_term:
+        description: Keyword to enter when testing job search
+        required: true
+        type: string
+        default: "software engineer"
 
 permissions:
   contents: read
@@ -18,9 +28,9 @@ concurrency:
 
 jobs:
   browser-tests:
-    name: Browser smoke tests
+    name: Browser tests
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - name: Check out test code
         uses: actions/checkout@v4
@@ -45,6 +55,8 @@ jobs:
       - name: Run browser tests
         env:
           BASE_URL: ${{ inputs.target_url }}
+          TEST_SCENARIO: ${{ inputs.test_scenario }}
+          SEARCH_TERM: ${{ inputs.search_term }}
         run: npm test
 
       - name: Upload Playwright results
