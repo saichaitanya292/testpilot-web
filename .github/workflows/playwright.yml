@@ -1,4 +1,4 @@
-name: Run Playwright browser tests
+name: Generate and run selected TestPilot cases
 
 on:
   workflow_dispatch:
@@ -58,6 +58,15 @@ jobs:
           TEST_SCENARIO: ${{ inputs.test_scenario }}
           SEARCH_TERM: ${{ inputs.search_term }}
         run: npm test
+
+      - name: Add run summary
+        if: always()
+        run: |
+          echo "## TestPilot browser test report" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Target:** ${{ inputs.target_url }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Selected scenario(s):** ${{ inputs.test_scenario }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **Search keyword:** ${{ inputs.search_term }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "- **HTML report:** included in the `testpilot-playwright-results` artifact when generated." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload Playwright results
         if: always()
