@@ -151,3 +151,31 @@ textarea:focus, select:focus, input:focus {
 .chat-case-footer span{font-size:10px;line-height:1.6;color:#374151;overflow-wrap:anywhere}
 .chat-case-footer small{font-size:9px;line-height:1.5;color:#6b7280}
 @media(max-width:680px){.chat-case-panel{margin-left:0}.chat-case-heading{padding:12px}.chat-case-option{padding:11px 12px}.chat-case-list{max-height:390px}}
+
+
+/* Minimal agent-only experience: hide all marketing, navigation, legacy workspace, exports and history. */
+.topbar,
+.hero,
+.workspace,
+.results-section,
+.history-section,
+footer,
+.ambient { display: none !important; }
+.shell { width: min(100%, 1040px); margin: 0 auto; }
+.agent-shell {
+  margin: 0;
+  min-height: 100dvh;
+  height: 100dvh;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  grid-template-columns: 205px minmax(0, 1fr);
+}
+.agent-main { min-height: 100dvh; height: 100dvh; }
+.chat-thread { max-height: none; }
+@media(max-width:680px) {
+  .shell { width: 100%; }
+  .agent-shell { min-height: 100dvh; height: 100dvh; grid-template-columns: 1fr; }
+  .agent-main { min-height: 0; height: calc(100dvh - 98px); }
+  .chat-thread { flex: 1; min-height: 0; }
+}
