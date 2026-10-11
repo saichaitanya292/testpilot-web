@@ -270,7 +270,12 @@
     panel.append(heading, toolbar, list, footer);
     chatThread.appendChild(panel);
     syncSelectionUI();
-    panel.scrollIntoView({behavior:"smooth",block:"nearest"});
+    // Explicitly scroll the chat's own viewport; scrollIntoView alone can leave
+    // newly appended cards below the visible area on iOS Safari.
+    requestAnimationFrame(() => {
+      chatThread.scrollTop = chatThread.scrollHeight;
+      panel.scrollIntoView({behavior:"smooth", block:"end"});
+    });
   }
 
   function renderRunConfirmation(chosen) {
